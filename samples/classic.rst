@@ -13,3 +13,4 @@ platforms:
    hello_world/*
    synchronization/*
    philosophers/*
+   event_manager/*

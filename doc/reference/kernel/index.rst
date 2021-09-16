@@ -125,3 +125,4 @@ These pages cover other kernel services.
    other/version.rst
    other/fatal.rst
    other/thread_local_storage.rst
+   other/event_manager.rst

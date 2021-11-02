@@ -20,10 +20,19 @@
 	cpus {
 		#address-cells = <1>;
 		#size-cells = <0>;
-		cpu@0 {
+		cpu0: cpu@0 {
 			compatible = "ite,riscv-ite";
 			device_type = "cpu";
 			reg = <0>;
+			cpu-power-states = <&standby>;
+		};
+	};
+
+	power-states {
+		standby: standby {
+			compatible = "zephyr,power-state";
+			power-state-name = "standby";
+			min-residency-us = <240000>;
 		};
 	};
 
@@ -804,6 +813,21 @@
 			compatible = "ite,it8xxx2-gctrl";
 			reg = <0x00f02000 0x100>;
 			label = "GCTRL";
+		};
+
+		kscan0: kscan@f01d00 {
+			compatible = "ite,it8xxx2-kscan";
+			reg = <0x00f01d00 0x29
+			       0x00f01b02 0x01   /* WUEMR3 */
+			       0x00f01b06 0x01   /* WUESR3 */
+			       0x00f01b0a 0x01>; /* WUENR3 */
+			label = "KSCAN";
+			interrupt-parent = <&intc>;
+			interrupts = <IT8XXX2_IRQ_WKINTC IRQ_TYPE_LEVEL_HIGH>;
+			status = "disabled";
+			gpio-dev = <&gpioc>;
+			pinctrl-0 = <&pinctrl_kso16   /* GPC3 */
+				     &pinctrl_kso17>; /* GPC5 */
 		};
 	};
 };

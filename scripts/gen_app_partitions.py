@@ -56,7 +56,7 @@ data_template = """
 """
 
 library_data_template = """
-		*{0}:*(.data .data.*)
+		*{0}:*(.data .data.* .sdata .sdata.*)
 """
 
 bss_template = """
@@ -65,7 +65,7 @@ bss_template = """
 """
 
 library_bss_template = """
-		*{0}:*(.bss .bss.* COMMON COMMON.*)
+		*{0}:*(.bss .bss.* .sbss .sbss.* COMMON COMMON.*)
 """
 
 footer_template = """
@@ -90,6 +90,9 @@ linker_end_seq = """
 empty_app_smem = """
 	SECTION_PROLOGUE(_APP_SMEM{1}_SECTION_NAME,,)
 	{{
+#ifdef EMPTY_APP_SHARED_ALIGN
+		EMPTY_APP_SHARED_ALIGN;
+#endif
 		_app_smem{0}_start = .;
 		_app_smem{0}_end = .;
 	}} GROUP_DATA_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)

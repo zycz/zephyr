@@ -58,6 +58,8 @@
 			foo-names = "A", "b-c";
 			pwms = <&test_pwm1 8 200 3>, <&test_pwm2 5 100 1>;
 			pwm-names = "red", "green";
+			bar = <&test_gpio_1 200>, <&test_gpio_2 210>;
+			baz-names = "john", "doe";
 		};
 
 		test_enum_0: enum-0 {
@@ -122,6 +124,7 @@
 			reg = < 0xdeadbeef 0x1000 >;
 			#gpio-cells = < 0x2 >;
 			#foo-cells = < 0x1 >;
+			#baz-cells = < 0x1 >;
 			label = "TEST_GPIO_1";
 			interrupts = <4 3>;
 			status = "okay";
@@ -134,6 +137,7 @@
 			reg-names = "one", "two";
 			#gpio-cells = < 0x2 >;
 			#foo-cells = < 0x1 >;
+			#baz-cells = < 0x1 >;
 			interrupts = <5 2>;
 			label = "TEST_GPIO_2";
 			status = "okay";
@@ -215,6 +219,20 @@
 				label = "TEST_I2C_DEV_12";
 				reg = < 0x12 >;
 			};
+		};
+
+		test_mbox: mbox {
+			label = "TEST_MBOX";
+			compatible = "vnd,mbox";
+			#mbox-cells = <1>;
+			status = "okay";
+		};
+
+		test_mbox_zero_cell: mbox_zero_cell {
+			label = "TEST_MBOX_ZERO_CELL";
+			compatible = "vnd,mbox-zero-cell";
+			#mbox-cells = <0>;
+			status = "okay";
 		};
 
 		test_spi: spi@33334444 {
@@ -320,6 +338,8 @@
 			pinctrl-1 = <&test_pincfg_c &test_pincfg_d>;
 			pinctrl-2 = <&test_pincfg_d>;
 			pinctrl-names = "default", "sleep", "f.o.o2";
+			mboxes = <&test_mbox 1>, <&test_mbox 2>, <&test_mbox_zero_cell>;
+			mbox-names = "tx", "rx", "zero";
 		};
 
 		/* there should only be one of these */

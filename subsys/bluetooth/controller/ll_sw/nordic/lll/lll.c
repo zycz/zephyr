@@ -72,8 +72,9 @@ static void isr_race(void *param);
 static uint32_t preempt_ticker_start(struct lll_event *prev,
 				     struct lll_event *next);
 static uint32_t preempt_ticker_stop(void);
-static void preempt_ticker_cb(uint32_t ticks_at_expire, uint32_t remainder,
-			      uint16_t lazy, uint8_t force, void *param);
+static void preempt_ticker_cb(uint32_t ticks_at_expire, uint32_t ticks_drift,
+			      uint32_t remainder, uint16_t lazy, uint8_t force,
+			      void *param);
 static void preempt(void *param);
 #else /* CONFIG_BT_CTLR_LOW_LAT */
 #if (CONFIG_BT_CTLR_LLL_PRIO == CONFIG_BT_CTLR_ULL_LOW_PRIO)
@@ -367,9 +368,10 @@ int lll_done(void *param)
 }
 
 #if defined(CONFIG_BT_CTLR_LOW_LAT_ULL_DONE)
-void lll_done_sync(void)
+void lll_done_ull_inc(void)
 {
-	event.done.ull_count = event.done.lll_count;
+	LL_ASSERT(event.done.ull_count != event.done.lll_count);
+	event.done.ull_count++;
 }
 #endif /* CONFIG_BT_CTLR_LOW_LAT_ULL_DONE */
 
@@ -597,6 +599,7 @@ static int init_reset(void)
 static inline void done_inc(void)
 {
 	event.done.lll_count++;
+	LL_ASSERT(event.done.lll_count != event.done.ull_count);
 }
 #endif /* CONFIG_BT_CTLR_LOW_LAT_ULL_DONE */
 
@@ -857,8 +860,9 @@ static uint32_t preempt_ticker_stop(void)
 	return ret;
 }
 
-static void preempt_ticker_cb(uint32_t ticks_at_expire, uint32_t remainder,
-			       uint16_t lazy, uint8_t force, void *param)
+static void preempt_ticker_cb(uint32_t ticks_at_expire, uint32_t ticks_drift,
+			      uint32_t remainder, uint16_t lazy, uint8_t force,
+			      void *param)
 {
 	static memq_link_t link;
 	static struct mayfly mfy = {0, 0, &link, NULL, preempt};

@@ -52,7 +52,7 @@ if BUILD_WITH_TFM
 config TFM_KEY_FILE_S
 	string "Path to private key used to sign secure firmware images."
 	depends on BUILD_WITH_TFM
-	default "${ZEPHYR_BASE}/../modules/tee/tfm/trusted-firmware-m/bl2/ext/mcuboot/root-RSA-3072.pem"
+	default "${ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR}/bl2/ext/mcuboot/root-RSA-3072.pem"
 	help
 	  The path and filename for the .pem file containing the private key
 	  that should be used by the BL2 bootloader when signing secure
@@ -61,7 +61,7 @@ config TFM_KEY_FILE_S
 config TFM_KEY_FILE_NS
 	string "Path to private key used to sign non-secure firmware images."
 	depends on BUILD_WITH_TFM
-	default "${ZEPHYR_BASE}/../modules/tee/tfm/trusted-firmware-m/bl2/ext/mcuboot/root-RSA-3072_1.pem"
+	default "${ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR}/bl2/ext/mcuboot/root-RSA-3072_1.pem"
 	help
 	  The path and filename for the .pem file containing the private key
 	  that should be used by the BL2 bootloader when signing non-secure
@@ -264,5 +264,24 @@ config TFM_FLASH_MERGED_BINARY
 		Secure firmware image, optionally, the BL2 image
 		(if building with TFM_BL2 is enabled), and the
 		Non-Secure application firmware.
+
+choice TFM_SPM_LOG_LEVEL
+	prompt "TF-M SPM Log Level"
+	default TFM_SPM_LOG_LEVEL_INFO
+config TFM_SPM_LOG_LEVEL_DEBUG
+	bool "Debug"
+config TFM_SPM_LOG_LEVEL_INFO
+	bool "Info"
+config TFM_SPM_LOG_LEVEL_ERROR
+	bool "Error"
+config TFM_SPM_LOG_LEVEL_SILENCE
+	bool "Off"
+endchoice
+
+config TFM_EXCEPTION_INFO_DUMP
+	bool "TF-M exception info dump"
+	help
+	  On fatal errors in the secure firmware, capture info about the exception.
+	  Print the info if the SPM log level is sufficient.
 
 endif # BUILD_WITH_TFM

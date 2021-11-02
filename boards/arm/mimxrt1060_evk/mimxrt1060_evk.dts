@@ -172,6 +172,10 @@ arduino_serial: &lpuart3 {};
 	};
 };
 
+&adc1 {
+	status = "okay";
+};
+
 zephyr_udc0: &usb1 {
 	status = "okay";
 };
@@ -180,6 +184,7 @@ zephyr_udc0: &usb1 {
 	status = "okay";
 	pwr-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
 	cd-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>;
+	no-1-8-v;
 	status = "okay";
 };
 
@@ -193,5 +198,13 @@ zephyr_udc0: &usb1 {
 };
 
 &wdog0 {
+	status = "okay";
+};
+
+&lpspi1 {
+	status = "okay";
+};
+
+&lpspi3 {
 	status = "okay";
 };

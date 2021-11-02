@@ -17,7 +17,7 @@ K_SEM_DEFINE(sem, 0, 1);
 
 #ifdef CONFIG_FDC2X1X_TRIGGER
 static void trigger_handler(const struct device *dev,
-			    struct sensor_trigger *trigger)
+			    const struct sensor_trigger *trigger)
 {
 	switch (trigger->type) {
 	case SENSOR_TRIG_DATA_READY:
@@ -36,9 +36,6 @@ static void trigger_handler(const struct device *dev,
 #ifdef CONFIG_PM_DEVICE
 static void pm_info(enum pm_device_state state, int status)
 {
-	ARG_UNUSED(dev);
-	ARG_UNUSED(arg);
-
 	switch (state) {
 	case PM_DEVICE_STATE_ACTIVE:
 		printk("Enter ACTIVE_STATE ");
@@ -49,6 +46,8 @@ static void pm_info(enum pm_device_state state, int status)
 	case PM_DEVICE_STATE_OFF:
 		printk("Enter OFF_STATE ");
 		break;
+	default:
+		printk("Unknown power state");
 	}
 
 	if (status) {

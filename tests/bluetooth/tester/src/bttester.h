@@ -373,6 +373,13 @@ struct gap_bond_lost_ev {
 	uint8_t address[6];
 } __packed;
 
+#define GAP_EV_PAIRING_FAILED		0x8c
+struct gap_bond_pairing_failed_ev {
+	uint8_t address_type;
+	uint8_t address[6];
+	uint8_t reason;
+} __packed;
+
 /* GATT Service */
 /* commands */
 #define GATT_READ_SUPPORTED_COMMANDS	0x01
@@ -739,6 +746,9 @@ struct l2cap_read_supported_commands_rp {
 	uint8_t data[0];
 } __packed;
 
+#define L2CAP_CONNECT_OPT_ECFC		0x01
+#define L2CAP_CONNECT_OPT_HOLD_CREDIT	0x02
+
 #define L2CAP_CONNECT			0x02
 struct l2cap_connect_cmd {
 	uint8_t address_type;
@@ -746,7 +756,7 @@ struct l2cap_connect_cmd {
 	uint16_t psm;
 	uint16_t mtu;
 	uint8_t num;
-	uint8_t ecfc;
+	uint8_t options;
 } __packed;
 struct l2cap_connect_rp {
 	uint8_t num;
@@ -785,6 +795,20 @@ struct l2cap_listen_cmd {
 struct l2cap_accept_connection_cmd {
 	uint8_t chan_id;
 	uint16_t result;
+} __packed;
+
+#define L2CAP_RECONFIGURE		0x07
+struct l2cap_reconfigure_cmd {
+	uint8_t address_type;
+	uint8_t address[6];
+	uint16_t mtu;
+	uint8_t num;
+	uint8_t chan_id[];
+} __packed;
+
+#define L2CAP_CREDITS		0x08
+struct l2cap_credits_cmd {
+	uint8_t chan_id;
 } __packed;
 
 #define L2CAP_DISCONNECT_EATT_CHANS		0x09
@@ -831,6 +855,15 @@ struct l2cap_data_received_ev {
 	uint8_t data[];
 } __packed;
 
+#define L2CAP_EV_RECONFIGURED		0x84
+struct l2cap_reconfigured_ev {
+	uint8_t chan_id;
+	uint16_t mtu_remote;
+	uint16_t mps_remote;
+	uint16_t mtu_local;
+	uint16_t mps_local;
+} __packed;
+
 /* MESH Service */
 /* commands */
 #define MESH_READ_SUPPORTED_COMMANDS	0x01
@@ -850,6 +883,12 @@ struct mesh_read_supported_commands_rp {
 #define MESH_IN_ENTER_STRING		BIT(3)
 
 #define MESH_CONFIG_PROVISIONING	0x02
+
+struct set_keys {
+	uint8_t pub_key[64];
+	uint8_t priv_key[32];
+} __packed;
+
 struct mesh_config_provisioning_cmd {
 	uint8_t uuid[16];
 	uint8_t static_auth[16];
@@ -857,6 +896,8 @@ struct mesh_config_provisioning_cmd {
 	uint16_t out_actions;
 	uint8_t in_size;
 	uint16_t in_actions;
+	uint8_t auth_method;
+	struct set_keys set_keys[0];
 } __packed;
 
 #define MESH_PROVISION_NODE		0x03
@@ -868,6 +909,7 @@ struct mesh_provision_node_cmd {
 	uint32_t seq_num;
 	uint16_t addr;
 	uint8_t dev_key[16];
+	uint8_t pub_key[0];
 } __packed;
 
 #define MESH_INIT			0x04
